@@ -1,22 +1,34 @@
 import java.util.*;
+import java.text.*;
 
 public class Hello {
 
   public static void main(String[] args) {
 
-    //起動時説明を出力する
+    //起動時説明を出力して、計算式を入力させる
     System.out.println("数式を入力してください。(例)1+1");
     System.out.println("プログラムを終了したい場合、endと書いてください。");
-    calculation();
+    input();
+
+  }
+
+  //計算式を入力させて、式を整えるメソッド
+  public static void input (){
+    Scanner scanner = new Scanner(System.in);
+    System.out.print("計算式：");
+    String inputFormula = scanner.nextLine();
+    System.out.println(inputFormula);
+    while (inputFormula.contains("(")) {
+      inputFormula = findPriority(inputFormula);
+      continue;
+    }
+    System.out.println("計算結果:"+calculation(inputFormula));
+    input();
   }
 
 
-    //計算式を入力
-    public static void calculation (){
-      Scanner scanner = new Scanner(System.in);
-      System.out.print("計算式：");
-      String formula = scanner.nextLine();
-      System.out.println(formula);
+    //計算を行うメソッド String型の数式を受け取り、String型の数字で返す
+    public static String calculation (String formula){
 
       //endを検出しプログラムを終わらせる
       if (formula.contains("end")) {
@@ -64,7 +76,7 @@ public class Hello {
             semiTotal= semiTotal / doubleNumber[n];
           } else if (operatorList[n].contains("/") && doubleNumber[n]==0) {
             System.out.println("0で除算をすることはできません。やり直してください");
-            calculation();
+            input();
           }
           splitTotal[a]=semiTotal;
         }
@@ -84,17 +96,34 @@ public class Hello {
 
       //整数を選別し型を変換する
       int integer = 0;
+      String answer;
       if (total % 1 == 0) {
         integer = (int) total;
-        System.out.println("計算結果:"+integer);
+        answer = String.valueOf(integer);
       } else {
-        System.out.println("計算結果:"+total);
+        answer = String.valueOf(total);
       }
+      return answer;
+  }
 
-      calculation();
-    }
 
 
+  //()を検出して中身を計算して書き換えるメソッド
+     public static String findPriority(String formula) {
+       if (formula.contains("(")) {
+         int start = formula.indexOf("(");
+         int end = formula.indexOf(")");
+         String changeFormula = formula.substring(start+1, end);
+         //System.out.println(changeFormula);
+         changeFormula = calculation(changeFormula);
+         //System.out.println(changeFormula);
+         String beforeFormula = formula.substring(0,start);
+         String afterFormula = formula.substring(end+1);
+         formula = beforeFormula+changeFormula+afterFormula;
+         //System.out.println(formula);
+       }
+       return formula;
+     }
 
   }
 
