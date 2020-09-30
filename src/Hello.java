@@ -82,7 +82,6 @@ public class Hello {
         }
       }
 
-
       //最終計算を行う
       double total = splitTotal[0];
       for (int p=1 ;p< additionAndSubtraction.length;p++ ){
@@ -92,7 +91,6 @@ public class Hello {
           total-=splitTotal[p];
         }
       }
-
 
       //整数を選別し型を変換する
       int integer = 0;
@@ -107,21 +105,28 @@ public class Hello {
   }
 
 
-
   //()を検出して中身を計算して書き換えるメソッド
      public static String findPriority(String formula) {
-       if (formula.contains("(")) {
          int start = formula.indexOf("(");
+         //()の中にさらに()があるかを検出して計算を行う
+         if (formula.indexOf("(",start+1)<formula.indexOf(")",start+1) && formula.indexOf("(",start+1) != -1){
+           int startIn = formula.indexOf("(",start+1);
+           int endIn = formula.indexOf(")",start+1);
+           String changeFormulaIn = formula.substring(startIn+1, endIn);
+           changeFormulaIn = calculation(changeFormulaIn);
+           String beforeFormulaIn = formula.substring(0,startIn);
+           String afterFormulaIn = formula.substring(endIn+1);
+           formula = beforeFormulaIn+changeFormulaIn+afterFormulaIn;
+         }
+
+
          int end = formula.indexOf(")");
          String changeFormula = formula.substring(start+1, end);
-         //System.out.println(changeFormula);
          changeFormula = calculation(changeFormula);
-         //System.out.println(changeFormula);
          String beforeFormula = formula.substring(0,start);
          String afterFormula = formula.substring(end+1);
          formula = beforeFormula+changeFormula+afterFormula;
-         //System.out.println(formula);
-       }
+
        return formula;
      }
 
