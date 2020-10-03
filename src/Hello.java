@@ -105,27 +105,36 @@ public class Hello {
   }
 
 
-  //()を検出して中身を計算して書き換えるメソッド
+  //()をセット検出して中身を計算して書き換えるメソッド
      public static String findPriority(String formula) {
+
+         // 括弧の始まりと終わりを対応させて括弧内を抽出
          int start = formula.indexOf("(");
-         //()の中にさらに()があるかを検出して計算を行う
-         if (formula.indexOf("(",start+1)<formula.indexOf(")",start+1) && formula.indexOf("(",start+1) != -1){
-           int startIn = formula.indexOf("(",start+1);
-           int endIn = formula.indexOf(")",start+1);
-           String changeFormulaIn = formula.substring(startIn+1, endIn);
-           changeFormulaIn = calculation(changeFormulaIn);
-           String beforeFormulaIn = formula.substring(0,startIn);
-           String afterFormulaIn = formula.substring(endIn+1);
-           formula = beforeFormulaIn+changeFormulaIn+afterFormulaIn;
+         int startCounter = 1;
+         int endCounter = 0 ;
+         int x = formula.indexOf("(");;
+         while (startCounter > endCounter){
+           if (formula.indexOf("(",x+1)<formula.indexOf(")",x+1) && formula.indexOf("(",x+1) != -1){
+             x = formula.indexOf("(",x+1);
+             startCounter++;
+           }else if (formula.indexOf("(",x+1)>formula.indexOf(")",x+1) || formula.indexOf("(",x+1) == -1) {
+             x = formula.indexOf(")", x+1);
+             endCounter++;
+           }
+         }
+         String changeFormula = formula.substring(start+1, x);
+
+         //抽出した括弧の中にさらに括弧があればもう一度()を探させる
+         while (changeFormula.contains("(")){
+           changeFormula = findPriority(changeFormula);
          }
 
-
-         int end = formula.indexOf(")");
-         String changeFormula = formula.substring(start+1, end);
+         //抽出した式を計算させての前後と組み合わせる
          changeFormula = calculation(changeFormula);
          String beforeFormula = formula.substring(0,start);
-         String afterFormula = formula.substring(end+1);
+         String afterFormula = formula.substring(x+1);
          formula = beforeFormula+changeFormula+afterFormula;
+
 
        return formula;
      }
